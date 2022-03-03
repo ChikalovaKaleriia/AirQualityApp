@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace AirQualittyApp.ViewModels
 {
@@ -17,7 +18,13 @@ namespace AirQualittyApp.ViewModels
         public static ObservableCollection<City> Citys { get; set; }
         public  ObservableCollection<City> SelectedCitys { get; set; }
         public string CityName { get; set; }
-        
+
+        private string quality;
+        public string Quality { get { return quality; } set { quality = value; OnPropertyChanged("Quality"); } }
+
+        private string colorForCanvas;
+        public string ColorForCanvas { get { return colorForCanvas; } set { colorForCanvas = value; OnPropertyChanged("ColorForCanvas"); } }
+
 
 
         private readonly ICommand searchCommand;
@@ -39,16 +46,27 @@ namespace AirQualittyApp.ViewModels
             };
             searchCommand = new RelayCommand(async() => await SearchCity());
             statisticCommand = new RelayCommand(() => GoToStatistic());
-
-
         }
 
         public async Task SearchCity()
         {
             var airQualityProvider = new AirQualityProvider();
-            var response =  await airQualityProvider.GetCurrentQualityAsync(CityName);
-            var qua = response.AirQuality.Quality;
-            
+            try
+            {
+                var response = await airQualityProvider.GetCurrentQualityAsync(CityName);
+                Quality = response.AirQuality.Quality.ToString();
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
+            if(Convert.ToInt32(Quality) <= 50) ColorForCanvas = "#35cc38";
+            else if (Convert.ToInt32(Quality) >= 50 && Convert.ToInt32(Quality) <= 100) ColorForCanvas = "#f7ed60";
+            else if (Convert.ToInt32(Quality) >= 101 && Convert.ToInt32(Quality) <= 150) ColorForCanvas = "#f7a960";
+            else if (Convert.ToInt32(Quality) >= 151 && Convert.ToInt32(Quality) <= 200) ColorForCanvas = "##fa5252";
+            else if (Convert.ToInt32(Quality) >= 201 && Convert.ToInt32(Quality) <= 300) ColorForCanvas = "#c252fa";
+            else if (Convert.ToInt32(Quality) >= 301)  ColorForCanvas = "#590d11";
         }
 
         public void GoToStatistic()

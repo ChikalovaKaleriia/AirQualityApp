@@ -11,8 +11,8 @@
     <Window.DataContext>
         <vm:MainPageViewModel/>
     </Window.DataContext>
-    
-    <Grid>
+
+    <Grid Background="AliceBlue" >
 
         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Width="650" Height="550" VerticalAlignment="Top" Background="AliceBlue" >
             <StackPanel Orientation="Horizontal">
@@ -26,21 +26,15 @@
                 </Button>
             </StackPanel>
 
-            <Canvas Margin="0, 0, 0, 0" Width="650" Height="465" >
-                <Canvas.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FFF38A8A" Offset="0.255"/>
-                        <GradientStop Color="#FFE5D5D5" Offset="1"/>
-                    </LinearGradientBrush>
-                </Canvas.Background>
-                <TextBlock Height="60" Width="150" Canvas.Left="245" Canvas.Top="196"/>
+            <Canvas Margin="0, 0, 0, 0" Width="650" Height="465" Background="{Binding Path=ColorForCanvas}">
+                <TextBlock Height="60" Width="94" Canvas.Left="320" Canvas.Top="226" FontSize="40" Text="{Binding Quality, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
             </Canvas>
 
             <Image Source="Assets\Scale_.png" Margin="0, 5, 0, 0" Width="614" Height="33" VerticalAlignment="Bottom" ></Image>
         </StackPanel>
 
         <StackPanel Width="248"  Orientation="Vertical" HorizontalAlignment="Left" Margin="651,0,0,0" Background="AliceBlue" >
-            
+
             <TextBlock  Height="35"  FontFamily="Calibri" FontSize="20"  Padding="0, 5, 0, 0" HorizontalAlignment="Center" Background="#FFDCECFA" Width="250" TextWrapping="Wrap" >Select cities to get statistics:</TextBlock>
             <ListBox ItemsSource="{Binding Citys}" Height="465" >
                 <ListBox.ItemTemplate>
@@ -53,7 +47,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <Button Margin="105, 5, 0, 0" Height="35" Width="112" Content="Go to statistic" FontSize="16" FontFamily="Calibri" Background="#FFDCECFA" Command="{Binding StatisticCommand}" > </Button>
+            <Button Margin="105, 5, 0, 0" Height="35" Width="112" Content="Go to statistic" FontSize="16" FontFamily="Calibri" Background="#FFDCECFA" Command="{Binding StatisticCommand}" ></Button>
         </StackPanel>
 
 
