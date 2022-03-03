@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dgSpecHash": "0Aw+r7dCCCC+gm8cgoA4rBhlyV31jO1HsxX0x8+vGXt+XygEhkWkjRP9vnmhHIj8ECRSEmFi8qxwWOHeu6uG5Q==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\user\\GitHub\\AirQualityApp\\AirQualittyApp\\AirQualittyApp\\AirQualittyApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\user\\.nuget\\packages\\mvvmlightlibs\\5.4.1.1\\mvvmlightlibs.5.4.1.1.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Пакет \"MvvmLightLibs 5.4.1.1\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\", а не целевой платформы проекта \".NETCoreApp,Version=v3.1\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "libraryId": "MvvmLightLibs",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v3.1"
+      ]
+    }
+  ]
+}
