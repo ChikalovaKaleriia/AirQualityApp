@@ -54,7 +54,7 @@ namespace AirQualittyApp {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/AirQualittyApp;component/mainpage.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/AirQualittyApp;V1.0.0.0;component/mainpage.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\MainPage.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
