@@ -6,22 +6,14 @@
         xmlns:vm="clr-namespace:AirQualittyApp.ViewModels"
         xmlns:local="clr-namespace:AirQualittyApp"
         mc:Ignorable="d"
-        Title="Statistic" Height="450" Width="800">
+        Title="StatisticPage" Height="450" Width="800">
 
     <Window.DataContext>
-        <vm:StatisticPageViewModel/>
+        <vm:StatisticPageViewModel></vm:StatisticPageViewModel>
     </Window.DataContext>
-    
     <Grid>
-            <StackPanel Height="430" Width="200"  HorizontalAlignment="Right" Orientation="Vertical">
-                    <ListBox ItemsSource="{Binding SelectedCitys}" Height="430">
-                    <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Path=Name}"  FontSize="16"/>
-                    </DataTemplate>
-                    </ListBox.ItemTemplate>
-                    </ListBox>
-            </StackPanel>
+
+
 
     </Grid>
 </Window>

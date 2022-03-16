@@ -13,8 +13,6 @@ namespace AirQualittyApp.ViewModels
     {
 
         public static ObservableCollection<City> SelectedCitys { get; set; }
-        public string CityName { get; set; }
-
         public StatisticPageViewModel()
         {
             Messenger.Default.Register<ObservableCollection<City>>(this, MakeAList);

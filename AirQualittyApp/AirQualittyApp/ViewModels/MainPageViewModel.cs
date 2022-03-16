@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +16,9 @@ namespace AirQualittyApp.ViewModels
 {
     public class MainPageViewModel : INotifyPropertyChanged
     {
+        static HttpClient httpClient = new HttpClient();
         public static ObservableCollection<City> Citys { get; set; }
-        public  ObservableCollection<City> SelectedCitys { get; set; }
+        public ObservableCollection<City> SelectedCitys { get; set; }
         public string CityName { get; set; }
 
         private string quality;
@@ -50,23 +52,30 @@ namespace AirQualittyApp.ViewModels
 
         public async Task SearchCity()
         {
-            var airQualityProvider = new AirQualityProvider();
-            try
+            string url = "https://localhost:44387/airquality/" + CityName;
+            HttpResponseMessage responseMessage = await httpClient.GetAsync(url);
+            if(responseMessage.IsSuccessStatusCode)
             {
-                var response = await airQualityProvider.GetCurrentQualityAsync(CityName);
-                Quality = response.AirQuality.Quality.ToString();
-            }
-            catch(Exception e)
-            {
-                MessageBox.Show(e.Message);
+                Quality = await responseMessage.Content.ReadAsStringAsync();
             }
 
-            if(Convert.ToInt32(Quality) <= 50) ColorForCanvas = "#35cc38";
-            else if (Convert.ToInt32(Quality) >= 50 && Convert.ToInt32(Quality) <= 100) ColorForCanvas = "#f7ed60";
-            else if (Convert.ToInt32(Quality) >= 101 && Convert.ToInt32(Quality) <= 150) ColorForCanvas = "#f7a960";
-            else if (Convert.ToInt32(Quality) >= 151 && Convert.ToInt32(Quality) <= 200) ColorForCanvas = "##fa5252";
-            else if (Convert.ToInt32(Quality) >= 201 && Convert.ToInt32(Quality) <= 300) ColorForCanvas = "#c252fa";
-            else if (Convert.ToInt32(Quality) >= 301)  ColorForCanvas = "#590d11";
+            //var airQualityProvider = new AirQualityProvider();
+            //try
+            //{
+            //    var response = await airQualityProvider.GetCurrentQualityAsync(CityName);
+            //    Quality = response.AirQuality.Quality.ToString();
+            //}
+            //catch(Exception e)
+            //{
+            //    MessageBox.Show(e.Message);
+            //}
+
+            //if(Convert.ToInt32(Quality) <= 50) ColorForCanvas = "#35cc38";
+            //else if (Convert.ToInt32(Quality) >= 50 && Convert.ToInt32(Quality) <= 100) ColorForCanvas = "#f7ed60";
+            //else if (Convert.ToInt32(Quality) >= 101 && Convert.ToInt32(Quality) <= 150) ColorForCanvas = "#f7a960";
+            //else if (Convert.ToInt32(Quality) >= 151 && Convert.ToInt32(Quality) <= 200) ColorForCanvas = "#fa5252";
+            //else if (Convert.ToInt32(Quality) >= 201 && Convert.ToInt32(Quality) <= 300) ColorForCanvas = "#c252fa";
+            //else if (Convert.ToInt32(Quality) >= 301) ColorForCanvas = "#590d11";
         }
 
         public void GoToStatistic()
