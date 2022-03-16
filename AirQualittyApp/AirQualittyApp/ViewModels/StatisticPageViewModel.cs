@@ -12,18 +12,19 @@ namespace AirQualittyApp.ViewModels
     public class StatisticPageViewModel : INotifyPropertyChanged
     {
 
-        public static ObservableCollection<City> SelectedCitys { get; set; }
+        public static ObservableCollection<City> SelectedCitys { get; set; }  // The collection of selected cities
         public StatisticPageViewModel()
         {
-            Messenger.Default.Register<ObservableCollection<City>>(this, MakeAList);
+            Messenger.Default.Register<ObservableCollection<City>>(this, MakeAList); // Registreting of the collection with selected cities
         }
 
+         // Method for registreting collection
         public void MakeAList(ObservableCollection<City> citys)
         {
-            SelectedCitys = new ObservableCollection<City>();
+            SelectedCitys = new ObservableCollection<City>(); // Initialization of SelectedCities collection
             foreach(var c in citys)
             {
-                SelectedCitys.Add(c);
+                SelectedCitys.Add(c); // copy collection
             }
         }
 

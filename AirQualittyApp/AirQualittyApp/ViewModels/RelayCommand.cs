@@ -5,6 +5,7 @@ using System.Windows.Input;
 
 namespace AirQualittyApp.ViewModels
 {
+    // The base class for commands 
     public class RelayCommand : ICommand
     {
         private Action _execute;

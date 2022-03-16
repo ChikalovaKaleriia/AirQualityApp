@@ -36,7 +36,7 @@
         <StackPanel Width="248"  Orientation="Vertical" HorizontalAlignment="Left" Margin="651,0,0,0" Background="AliceBlue" >
 
             <TextBlock  Height="35"  FontFamily="Calibri" FontSize="20"  Padding="0, 5, 0, 0" HorizontalAlignment="Center" Background="#FFDCECFA" Width="250" TextWrapping="Wrap" >Select cities to get statistics:</TextBlock>
-            <ListBox ItemsSource="{Binding Citys}" Height="465" >
+            <ListBox ItemsSource="{Binding Cities}" Height="465" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="5" Orientation="Horizontal">

@@ -27,4 +27,3 @@ C:\Users\user\GitHub\AirQualityApp\AirQualittyApp\AirQualittyApp\obj\Debug\netco
 C:\Users\user\GitHub\AirQualityApp\AirQualittyApp\AirQualittyApp\obj\Debug\netcoreapp3.1\StatisticPage.g.cs
 C:\Users\user\GitHub\AirQualityApp\AirQualittyApp\AirQualittyApp\obj\Debug\netcoreapp3.1\MainPage.baml
 C:\Users\user\GitHub\AirQualityApp\AirQualittyApp\AirQualittyApp\obj\Debug\netcoreapp3.1\StatisticPage.baml
-C:\Users\user\GitHub\AirQualityApp\AirQualittyApp\AirQualittyApp\obj\Debug\netcoreapp3.1\AirQualittyApp.csproj.AssemblyReference.cache
