@@ -6,23 +6,19 @@ using System.Text;
 
 namespace AirQualittyApp.Models
 {
-    // Model for city
-    public class City : INotifyPropertyChanged
+    /// <summary>
+    /// Model of city
+    /// </summary>
+    public class City 
     {
-        // Name of the city
-        private string name;
-        public string Name { get { return name; } set { name = value; } }
+        /// <summary>
+        ///  Id of the city
+        /// </summary>
+        public string Id { get; set; }
 
-        // Did user select city for analyzing statistic 
-        private bool isSelected;
-        public bool IsSelected { get { return isSelected; } set { isSelected = value; } }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
+        /// <summary>
+        /// Name of the city
+        /// </summary>
+        public string Name { get; set; }
     }
 }

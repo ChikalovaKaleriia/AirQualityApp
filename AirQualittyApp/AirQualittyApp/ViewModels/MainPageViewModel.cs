@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -11,54 +12,130 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace AirQualittyApp.ViewModels
 {
-    // View Model class for working with MainPage
+    /// <summary>
+    /// View Model class for working with MainPage
+    /// </summary>
     public class MainPageViewModel : INotifyPropertyChanged
     {
-        static HttpClient httpClient = new HttpClient(); // Http Client for connection to API
-        public static ObservableCollection<City> Cities { get; set; } // The collection of cities. User can select city from this collection for analizing statistic 
-        public ObservableCollection<City> SelectedCitys { get; set; } // The collection of selected cities
-        public string CityName { get; set; } // Property for city`s name
+        #region Private
 
-        private string quality; 
-        public string Quality { get { return quality; } set { quality = value; OnPropertyChanged("Quality"); } }
+        /// <summary>
+        /// Http Client for connection to API
+        /// </summary>
+        private static HttpClient _httpClient = new HttpClient();
 
-        private string colorForCanvas; 
-        public string ColorForCanvas { get { return colorForCanvas; } set { colorForCanvas = value; OnPropertyChanged("ColorForCanvas"); } }  // Property for color of canvas 
+        /// <summary>
+        /// Respons from Db
+        /// </summary>
+        private string respon = "";
 
+        /// <summary>
+        /// Quality of air
+        /// </summary>
+        private string _quality;
 
+        /// <summary>
+        /// Color of canvas
+        /// </summary>
+        private string colorForCanvas;
 
-        private readonly ICommand searchCommand; // Command for air quality
-        public ICommand SearchCommand => searchCommand; 
+        /// <summary>
+        /// Command for air quality
+        /// </summary>
+        private readonly ICommand searchCommand;
 
-        private readonly ICommand statisticCommand; // Command for going to StatisticPage
+        /// <summary>
+        /// Command for selecting the city
+        /// </summary>
+        private readonly ICommand selectCityCommand;
+
+        /// <summary>
+        /// Command for going to StatisticPage
+        /// </summary>
+        private readonly ICommand statisticCommand;
+        #endregion
+
+        #region Public
+
+        /// <summary>
+        /// Property for city`s name, that user search
+        /// </summary>
+        public string CityName { get; set; }
+
+        /// <summary>
+        /// Property for city`s name
+        /// </summary>
+        public string NameOfSelectedCity { get; set; }
+
+        /// <summary>
+        /// Property for air quality
+        /// </summary>
+        public string Quality { get { return _quality; } set { _quality = value; OnPropertyChanged("Quality"); } }
+
+        /// <summary>
+        /// Property for color of canvas 
+        /// </summary>
+        public string ColorForCanvas { get { return colorForCanvas; } set { colorForCanvas = value; OnPropertyChanged("ColorForCanvas"); } } 
+        
+        /// <summary>
+        /// The collection of cities. User can select city from this collection for analizing statistic
+        /// </summary>
+        public static ObservableCollection<City> Cities { get; set; }
+
+        /// <summary>
+        /// The collection of selected cities
+        /// </summary>
+        public ObservableCollection<City> SelectedCities { get; set; } 
+
+        public ICommand SearchCommand => searchCommand;
+
+        public ICommand SelectCityCommand => selectCityCommand;
+
         public ICommand StatisticCommand => statisticCommand;
+        #endregion
 
+        #region Initialization
         public MainPageViewModel()
         {
-            // Initialization for Cities collection
-            Cities = new ObservableCollection<City> 
+            //Connecting to API
+            string url = Connector.ApiConnectionString + "/cities";
+            // Getting the response from API
+            HttpResponseMessage responseMessage = _httpClient.GetAsync(url).Result;
+            if (responseMessage.IsSuccessStatusCode)
             {
-            new City{Name = "Athens", IsSelected = false}, new City{Name = "Barcelona", IsSelected = false}, new City{Name = "Berlin", IsSelected = false},
-            new City{Name = "Budapest", IsSelected = true}, new City{Name = "Cairo", IsSelected = false}, new City{Name = "Chicago", IsSelected = false},
-            new City{Name = "Dublin", IsSelected = true}, new City{Name = "Dnipro", IsSelected = true}, new City{Name = "Istanbul", IsSelected = false},
-            new City{Name = "Geneva", IsSelected = false}, new City{Name = "Kharkiv", IsSelected = false}, new City{Name = "Kiev", IsSelected = false},
-            new City{Name = "London", IsSelected = false},  new City{Name = "Lisbon", IsSelected = false}, new City{Name = "Madrid", IsSelected = false},
-            new City{Name = "Milan", IsSelected = false}, new City{Name = "Sydney", IsSelected = false}, new City{Name = "Warsaw", IsSelected = false}
-            };
-            searchCommand = new RelayCommand(async() => await SearchCity()); // Binding searchCommand to SearchCity method 
-            statisticCommand = new RelayCommand(() => GoToStatistic()); // Binding statisticCommand to GoToStatistic method 
-        }
+                // Binding the response to respon
+                respon = responseMessage.Content.ReadAsStringAsync().Result;
+            }
+            // Initialization for Cities collection
+            Cities = JsonConvert.DeserializeObject<ObservableCollection<City>>(respon);
 
+            //Binding searchCommand to SearchCity method
+            searchCommand = new RelayCommand(async() => await SearchCity());
+            // Binding selectCityCommand to SelectCity method 
+            selectCityCommand = new RelayCommand(async () => await SelectCity());
+            // Binding statisticCommand to GoToStatistic method 
+            //statisticCommand = new RelayCommand(() => GoToStatistic()); 
+        }
+        #endregion
+
+        #region Methods
         public async Task SearchCity()
         {
-            string url = "https://localhost:44387/airquality/" + CityName; // url for connecting to API
-            HttpResponseMessage responseMessage = await httpClient.GetAsync(url); // Getting the response from API
+            // url for connecting to API
+            string url = Connector.ApiConnectionString + "/airquality/" + CityName;
+            // Getting the response from API
+            HttpResponseMessage responseMessage = await _httpClient.GetAsync(url); 
+
             if(responseMessage.IsSuccessStatusCode)
             {
-                Quality = await responseMessage.Content.ReadAsStringAsync(); // Binding the response to Quality
+                // Binding the response to Quality
+                Quality = await responseMessage.Content.ReadAsStringAsync(); 
             }
 
             //Changing the color of canvas depending on the Quality
@@ -70,28 +147,43 @@ namespace AirQualittyApp.ViewModels
             else if (Convert.ToInt32(Quality) >= 301) ColorForCanvas = "#590d11";
         }
 
-        public void GoToStatistic()
+        public async Task SelectCity()
         {
-            SelectedCitys = new ObservableCollection<City>(); // Initialization of collection
-            foreach(var c in Cities)
-            {
-                if(c.IsSelected == true)
-                {
-                    SelectedCitys.Add(c); //checking the IsSelected property of the city
-                }
-            }
-            StatisticPage statisticPage = new StatisticPage(); // Initialization of the Statistic Page
-            statisticPage.Show(); // Showing the Statistic Page
-            Messenger.Default.Send<ObservableCollection<City>>(SelectedCitys); // Sending the SelectedCities collection 
-
+            //NameOfSelectedCity
         }
 
+        //public void GoToStatistic()
+        //{
+        //    File.WriteAllText("Cities.json", JsonSerializer.Serialize<ObservableCollection<City>>(Cities));
+
+        //    // Initialization of collection
+        //    SelectedCities = new ObservableCollection<City>();
+
+        //    foreach (var c in Cities)
+        //    {
+        //        if (c.IsSelected == true)
+        //        {
+        //            //Checking the IsSelected property of the city
+        //            SelectedCities.Add(c);
+        //        }
+        //    }
+        //    StatisticPageViewModel statisticPageViewModel = new StatisticPageViewModel(SelectedCities);
+        //    // Initialization of the Statistic Page
+        //    StatisticPage statisticPage = new StatisticPage();
+        //    statisticPage.DataContext = statisticPageViewModel;
+
+        //    // Showing the Statistic Page
+        //    statisticPage.Show(); 
+        //}
+        #endregion
+
+        #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
-
+        #endregion
     }
 }

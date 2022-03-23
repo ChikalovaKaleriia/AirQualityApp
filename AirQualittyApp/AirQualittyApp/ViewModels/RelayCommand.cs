@@ -8,6 +8,7 @@ namespace AirQualittyApp.ViewModels
     // The base class for commands 
     public class RelayCommand : ICommand
     {
+
         private Action _execute;
         private Func<bool> _canExecute;
 

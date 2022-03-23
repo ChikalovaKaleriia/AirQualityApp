@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AirQualittyApp.Models
+namespace AirQualittyApp.Models.Domain
 {
-    // Model for an air quality
+    /// <summary>
+    /// Model of an air quality
+    /// </summary>
     public class AirQuality
     {
+        /// <summary>
+        /// Air Quality
+        /// </summary>
         public int Quality { get; set; }
     }
 }

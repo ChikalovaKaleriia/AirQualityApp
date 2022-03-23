@@ -4,13 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:AirQualittyApp.ViewModels"
-        xmlns:local="clr-namespace:AirQualittyApp"
+        xmlns:local="clr-namespace:AirQualittyApp" 
         mc:Ignorable="d"
         Title="Air Quality" Height="580" Width="899">
 
-    <Window.DataContext>
-        <vm:MainPageViewModel/>
-    </Window.DataContext>
 
     <Grid Background="AliceBlue" >
 
@@ -40,8 +37,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="5" Orientation="Horizontal">
-                            <Button Height="20" Width="20" Background="AliceBlue" BorderBrush="#FF040404" ></Button>
-                            <TextBlock Margin="10, 0, 0, 0" Text="{Binding Path=Name}"  FontSize="16"/>
+                            <CheckBox Height="20" Width="20" Background="AliceBlue" BorderBrush="#FF040404" Content="{Binding Path=Name}"></CheckBox>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

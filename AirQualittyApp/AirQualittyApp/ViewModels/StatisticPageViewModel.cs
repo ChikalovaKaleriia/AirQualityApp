@@ -6,33 +6,64 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using MongoDB.Driver;
+using AirQualittyApp.Models.Domain;
+using System.Net.Http;
+using System.Windows.Threading;
 
 namespace AirQualittyApp.ViewModels
 {
     public class StatisticPageViewModel : INotifyPropertyChanged
     {
+        #region Private
+        
 
-        public static ObservableCollection<City> SelectedCitys { get; set; }  // The collection of selected cities
-        public StatisticPageViewModel()
+       
+        #endregion
+
+        #region Public
+        /// <summary>
+        /// The collection of selected cities
+        /// </summary>
+        public static ObservableCollection<City> SelectedCities { get; set; }
+
+        /// <summary>
+        /// Http client for connection to API
+        /// </summary>
+        HttpClient _httpClient = new HttpClient();
+        
+ 
+        #endregion
+
+        #region Initialization
+        public StatisticPageViewModel(ObservableCollection<City> selectedCities)
         {
-            Messenger.Default.Register<ObservableCollection<City>>(this, MakeAList); // Registreting of the collection with selected cities
+            //Initialization of SelectedCities colloction
+            SelectedCities = selectedCities;
+            
         }
+        #endregion
 
-         // Method for registreting collection
-        public void MakeAList(ObservableCollection<City> citys)
-        {
-            SelectedCitys = new ObservableCollection<City>(); // Initialization of SelectedCities collection
-            foreach(var c in citys)
-            {
-                SelectedCitys.Add(c); // copy collection
-            }
-        }
-
+        #region INotifyPropertyChanched
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
+        #endregion
+
+        #region Comments
+        //private DbCity selectedCity;
+        //public DbCity SelectedCity {
+        //    get { return selectedCity; }
+        //    set
+        //    {
+        //        selectedCity = value;
+        //        OnPropertyChanged("SelectedCity");
+        //    }
+        //}
+        //public static ObservableCollection<string> CollectionOfQuality { get; set; }
+        #endregion
     }
 }

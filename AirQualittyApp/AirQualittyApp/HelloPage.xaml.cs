@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AirQualittyApp.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,8 +27,10 @@ namespace AirQualittyApp
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
-        {
+       {
+            MainPageViewModel mainPageViewModel = new MainPageViewModel();
             MainPage main = new MainPage();
+            main.DataContext = mainPageViewModel;
             main.Show();
         }
     }
