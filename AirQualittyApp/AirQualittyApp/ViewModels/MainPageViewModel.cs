@@ -15,6 +15,8 @@ using System.Windows.Media;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
+using System.Linq;
+using AirQualittyApp.Models.Domain;
 
 namespace AirQualittyApp.ViewModels
 {
@@ -33,7 +35,12 @@ namespace AirQualittyApp.ViewModels
         /// <summary>
         /// Respons from Db
         /// </summary>
-        private string respon = "";
+        private string responAllCities = "";
+
+        /// <summary>
+        /// Respons from Db
+        /// </summary>
+        private string responSelectedCities = "";
 
         /// <summary>
         /// Quality of air
@@ -62,7 +69,6 @@ namespace AirQualittyApp.ViewModels
         #endregion
 
         #region Public
-
         /// <summary>
         /// Property for city`s name, that user search
         /// </summary>
@@ -86,12 +92,12 @@ namespace AirQualittyApp.ViewModels
         /// <summary>
         /// The collection of cities. User can select city from this collection for analizing statistic
         /// </summary>
-        public static ObservableCollection<City> Cities { get; set; }
+        public ObservableCollection<CityViewModel> Cities { get; set; }
 
         /// <summary>
         /// The collection of selected cities
         /// </summary>
-        public ObservableCollection<City> SelectedCities { get; set; } 
+        public ObservableCollection<string> SelectedCities { get; set; }
 
         public ICommand SearchCommand => searchCommand;
 
@@ -103,32 +109,74 @@ namespace AirQualittyApp.ViewModels
         #region Initialization
         public MainPageViewModel()
         {
+            #region Initialization of Cities
             //Connecting to API
-            string url = Connector.ApiConnectionString + "/cities";
+            string urlAllCities = Connector.ApiConnectionString + "/cities";
             // Getting the response from API
-            HttpResponseMessage responseMessage = _httpClient.GetAsync(url).Result;
-            if (responseMessage.IsSuccessStatusCode)
+            HttpResponseMessage responseMessageAllCities = _httpClient.GetAsync(urlAllCities).Result;
+            if (responseMessageAllCities.IsSuccessStatusCode)
             {
-                // Binding the response to respon
-                respon = responseMessage.Content.ReadAsStringAsync().Result;
+                // Binding the response to responAllCities
+                responAllCities = responseMessageAllCities.Content.ReadAsStringAsync().Result;
             }
-            // Initialization for Cities collection
-            Cities = JsonConvert.DeserializeObject<ObservableCollection<City>>(respon);
+            var cities = JsonConvert.DeserializeObject<ObservableCollection<City>>(responAllCities);
+            #endregion
 
+            #region Initialization of SelectedCities
+            //Connecting to API
+            string urlSelectedCities = Connector.ApiConnectionString + "/userselect";
+            // Getting the response from API
+            HttpResponseMessage responseMessageSelectedCities = _httpClient.GetAsync(urlSelectedCities).Result;
+            if (responseMessageSelectedCities.IsSuccessStatusCode)
+            {
+                // Binding the response to responSelectedCities
+                responSelectedCities = responseMessageSelectedCities.Content.ReadAsStringAsync().Result;
+            }
+            //Initialization of the SelectedCities collection
+            SelectedCities = JsonConvert.DeserializeObject<ObservableCollection<string>>(responSelectedCities);
+            #endregion
+
+            // Action of saving changes
+            Action<string, bool> saveAction = (id, isSelected) =>
+            {
+                if (isSelected)
+                {
+                    SelectedCities.Add(id);
+                    Select(id);
+                }
+
+                else
+                {
+                    SelectedCities.Remove(id);
+                    Unselect(id);
+                }
+            };
+
+            // Initialization for Cities collection
+            Cities = new ObservableCollection<CityViewModel>(cities.Select(x =>new CityViewModel(x, saveAction)
+            {
+                IsChecked = SelectedCities.Contains(x.Id)
+            }));
+
+            #region Initialization of Commands
             //Binding searchCommand to SearchCity method
             searchCommand = new RelayCommand(async() => await SearchCity());
-            // Binding selectCityCommand to SelectCity method 
-            selectCityCommand = new RelayCommand(async () => await SelectCity());
-            // Binding statisticCommand to GoToStatistic method 
-            //statisticCommand = new RelayCommand(() => GoToStatistic()); 
+
+            //Binding statisticCommand to GoToStatistic method
+            //statisticCommand = new RelayCommand(() => GoToStatistic());
+            #endregion
         }
         #endregion
 
         #region Methods
+        /// <summary>
+        ///  Searching the city Air Quality
+        /// </summary>
         public async Task SearchCity()
         {
             // url for connecting to API
             string url = Connector.ApiConnectionString + "/airquality/" + CityName;
+
             // Getting the response from API
             HttpResponseMessage responseMessage = await _httpClient.GetAsync(url); 
 
@@ -147,13 +195,62 @@ namespace AirQualittyApp.ViewModels
             else if (Convert.ToInt32(Quality) >= 301) ColorForCanvas = "#590d11";
         }
 
-        public async Task SelectCity()
+        /// <summary>
+        /// Select city and go to Api
+        /// </summary>
+        public void Select(string id)
         {
-            //NameOfSelectedCity
+            //Content for Post Api
+            var content = new StringContent(SerializeObject("post"), Encoding.UTF8, "application/json");
+
+            // url for connecting to API
+            string urlPost = Connector.ApiConnectionString + "/userselect/" + id;
+
+            //Connection
+            _httpClient.PostAsync(urlPost, content);
+        }
+ 
+        /// <summary>
+        /// Unselect city and go to Api
+        /// </summary>
+        public void Unselect(string id)
+        {
+
+            // url for connecting to API
+            string urlDelete = Connector.ApiConnectionString + "/userselect/" + id;
+
+            //Connecting
+            _httpClient.DeleteAsync(urlDelete);
         }
 
-        //public void GoToStatistic()
+        /// <summary>
+        /// Serialization for Post Api in Select() method
+        /// </summary>
+        private string SerializeObject<T>(T value, bool handleTimeZone = true)
+        {
+            var jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+            if (handleTimeZone) jsonSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+
+            return JsonConvert.SerializeObject(value, jsonSettings);
+        }
+        #endregion
+
+        #region Comments
+
+        //SelectedCityForApi selected = new SelectedCityForApi();
+        //selected.Id = new List<string>();
+        //foreach(var sc in SelectedCities)
         //{
+        //    selected.Id.Add(sc);
+        //}
+        //var content = new StringContent(SerializeObject(selected), Encoding.UTF8, "application/json");
+        //// url for connecting to API
+        //string urlPost = Connector.ApiConnectionString + "/userselect";
+        //_httpClient.PostAsync(urlPost, content);
+
+        // Binding selectCityCommand to SelectCity method 
+        //selectCityCommand = new RelayCommand(async () => await SelectCity());
+
         //    File.WriteAllText("Cities.json", JsonSerializer.Serialize<ObservableCollection<City>>(Cities));
 
         //    // Initialization of collection
@@ -173,8 +270,7 @@ namespace AirQualittyApp.ViewModels
         //    statisticPage.DataContext = statisticPageViewModel;
 
         //    // Showing the Statistic Page
-        //    statisticPage.Show(); 
-        //}
+        //statisticPage.Show();
         #endregion
 
         #region INotifyPropertyChanged

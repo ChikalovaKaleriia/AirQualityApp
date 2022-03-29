@@ -26,12 +26,17 @@ namespace AirQualittyApp
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Start(object sender, RoutedEventArgs e)
        {
             MainPageViewModel mainPageViewModel = new MainPageViewModel();
             MainPage main = new MainPage();
             main.DataContext = mainPageViewModel;
             main.Show();
+        }
+
+        private void Button_Exit(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

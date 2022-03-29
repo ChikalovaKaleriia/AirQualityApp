@@ -8,7 +8,6 @@
         mc:Ignorable="d"
         Title="Air Quality" Height="580" Width="899">
 
-
     <Grid Background="AliceBlue" >
 
         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Width="650" Height="550" VerticalAlignment="Top" Background="AliceBlue" >
@@ -37,7 +36,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="5" Orientation="Horizontal">
-                            <CheckBox Height="20" Width="20" Background="AliceBlue" BorderBrush="#FF040404" Content="{Binding Path=Name}"></CheckBox>
+                            <CheckBox Background="AliceBlue" BorderBrush="#FF040404" IsChecked="{Binding IsChecked}" Content="{Binding Path=Name}"></CheckBox>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
