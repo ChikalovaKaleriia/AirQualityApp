@@ -163,7 +163,7 @@ namespace AirQualittyApp.ViewModels
             searchCommand = new RelayCommand(async() => await SearchCity());
 
             //Binding statisticCommand to GoToStatistic method
-            //statisticCommand = new RelayCommand(() => GoToStatistic());
+            statisticCommand = new RelayCommand(() => GoToStatistic());
             #endregion
         }
         #endregion
@@ -223,6 +223,17 @@ namespace AirQualittyApp.ViewModels
             _httpClient.DeleteAsync(urlDelete);
         }
 
+        public void GoToStatistic()
+        {
+            StatisticPageViewModel statisticPageViewModel = new StatisticPageViewModel();
+            // Initialization of the Statistic Page
+            StatisticPage statisticPage = new StatisticPage();
+            statisticPage.DataContext = statisticPageViewModel;
+
+            // Showing the Statistic Page
+            statisticPage.Show();
+        }
+
         /// <summary>
         /// Serialization for Post Api in Select() method
         /// </summary>
@@ -236,41 +247,6 @@ namespace AirQualittyApp.ViewModels
         #endregion
 
         #region Comments
-
-        //SelectedCityForApi selected = new SelectedCityForApi();
-        //selected.Id = new List<string>();
-        //foreach(var sc in SelectedCities)
-        //{
-        //    selected.Id.Add(sc);
-        //}
-        //var content = new StringContent(SerializeObject(selected), Encoding.UTF8, "application/json");
-        //// url for connecting to API
-        //string urlPost = Connector.ApiConnectionString + "/userselect";
-        //_httpClient.PostAsync(urlPost, content);
-
-        // Binding selectCityCommand to SelectCity method 
-        //selectCityCommand = new RelayCommand(async () => await SelectCity());
-
-        //    File.WriteAllText("Cities.json", JsonSerializer.Serialize<ObservableCollection<City>>(Cities));
-
-        //    // Initialization of collection
-        //    SelectedCities = new ObservableCollection<City>();
-
-        //    foreach (var c in Cities)
-        //    {
-        //        if (c.IsSelected == true)
-        //        {
-        //            //Checking the IsSelected property of the city
-        //            SelectedCities.Add(c);
-        //        }
-        //    }
-        //    StatisticPageViewModel statisticPageViewModel = new StatisticPageViewModel(SelectedCities);
-        //    // Initialization of the Statistic Page
-        //    StatisticPage statisticPage = new StatisticPage();
-        //    statisticPage.DataContext = statisticPageViewModel;
-
-        //    // Showing the Statistic Page
-        //statisticPage.Show();
         #endregion
 
         #region INotifyPropertyChanged

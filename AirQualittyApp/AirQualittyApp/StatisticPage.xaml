@@ -5,25 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AirQualittyApp"
         mc:Ignorable="d"
-        Title="StatisticPage" Height="450" Width="800">
+        Title="StatisticPage" Height="450" Width="500">
 
     <Grid Background="AliceBlue">
-        <StackPanel Orientation="Vertical" Margin="0,0,160,0" DataContext="{Binding SelectedCity}">
-            <TextBox Margin="0, 20, 0, 0" Text="{Binding CollectionOfQuality, UpdateSourceTrigger=PropertyChanged}" />
-
-        </StackPanel>
-        
-        <StackPanel Orientation="Vertical" Margin="650,0,0,0">
-            <ListBox ItemsSource="{Binding SelectedCities}" SelectedItem="{Binding SelectedCity}" Height="433"  Background="AliceBlue">
+        <StackPanel Margin="350,0,0,-1" Orientation="Vertical" Background="AliceBlue">
+            <ListBox ItemsSource="{Binding SelectedCities}" Height="430" Width="155" SelectedItem="{Binding SelectedCity}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Margin="10, 5, 0, 0" Text="{Binding Path=Name}"  FontSize="16"  Padding="0, 0, 0, 5"/>
+                        <TextBlock Text="{Binding Path=Name}" FontSize="16" Margin="10,5,0,5" ></TextBlock>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </StackPanel>
 
-
+        <StackPanel Margin="91,169,210,158" Orientation="Vertical" DataContext="{Binding SelectedCity}">
+            <TextBlock Text="Description:" HorizontalAlignment='Center'></TextBlock>
+            <TextBlock Text="{Binding Path = StringStatistic}" HorizontalAlignment="Center"  Height="20" FontSize="16" VerticalAlignment="Bottom"></TextBlock>
+            <TextBlock Text="Average value:" HorizontalAlignment='Center'></TextBlock>
+            <TextBlock Text="{Binding Path = Average}" HorizontalAlignment="Center" Height="20" FontSize="16" VerticalAlignment="Bottom"></TextBlock>
+            
+        </StackPanel>
 
     </Grid>
 </Window>
