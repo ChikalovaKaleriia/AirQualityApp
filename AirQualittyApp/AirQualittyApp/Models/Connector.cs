@@ -10,9 +10,20 @@ namespace AirQualittyApp.Models
     /// </summary>
     public class Connector
     {
+        private static Connector instance;
         /// <summary>
         /// Connection string to API 
         /// </summary>
-        public static string ApiConnectionString = ConfigurationManager.ConnectionStrings["ApiConnectionString"].ConnectionString;
+        public string ApiConnectionString { get; private set; }
+        private Connector()
+        {
+            ApiConnectionString = ConfigurationManager.ConnectionStrings["ApiConnectionString"].ConnectionString;
+        }
+        public static Connector GetInstance()
+        {
+            if (instance == null)
+                instance = new Connector();
+            return instance;
+        }
     }
 }

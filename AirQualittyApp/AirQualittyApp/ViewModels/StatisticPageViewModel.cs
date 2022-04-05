@@ -24,6 +24,11 @@ namespace AirQualittyApp.ViewModels
 
         #region Public
         /// <summary>
+        /// COnnector for connection to Api
+        /// </summary>
+        public Connector connector = Connector.GetInstance();
+
+        /// <summary>
         /// The collection of selected cities
         /// </summary>
         public static ObservableCollection<SelectedCitiesAndStatistic> SelectedCities { get; set; }
@@ -57,9 +62,10 @@ namespace AirQualittyApp.ViewModels
         public StatisticPageViewModel()
         {
             //Connecting to API
-            string urlAllCities = Connector.ApiConnectionString + "/statistic";
+            string urlAllCities = connector.ApiConnectionString + "/statistic";
             // Getting the response from API
             HttpResponseMessage responseMessageAllCities = _httpClient.GetAsync(urlAllCities).Result;
+
             if (responseMessageAllCities.IsSuccessStatusCode)
             {
                 // Binding the response to responAllCities
@@ -80,17 +86,5 @@ namespace AirQualittyApp.ViewModels
         }
         #endregion
 
-        #region Comments
-        //private DbCity selectedCity;
-        //public DbCity SelectedCity {
-        //    get { return selectedCity; }
-        //    set
-        //    {
-        //        selectedCity = value;
-        //        OnPropertyChanged("SelectedCity");
-        //    }
-        //}
-        //public static ObservableCollection<string> CollectionOfQuality { get; set; }
-        #endregion
     }
 }

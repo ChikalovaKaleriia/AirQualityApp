@@ -30,7 +30,7 @@ namespace AirQualittyApp.ViewModels
         /// <summary>
         /// Http Client for connection to API
         /// </summary>
-        private static HttpClient _httpClient = new HttpClient();
+        private HttpClient _httpClient = new HttpClient();
 
         /// <summary>
         /// Respons from Db
@@ -69,6 +69,11 @@ namespace AirQualittyApp.ViewModels
         #endregion
 
         #region Public
+        /// <summary>
+        /// COnnector for connection to Api
+        /// </summary>
+        public Connector connector = Connector.GetInstance();
+
         /// <summary>
         /// Property for city`s name, that user search
         /// </summary>
@@ -110,28 +115,34 @@ namespace AirQualittyApp.ViewModels
         public MainPageViewModel()
         {
             #region Initialization of Cities
+
             //Connecting to API
-            string urlAllCities = Connector.ApiConnectionString + "/cities";
+            string urlAllCities = connector.ApiConnectionString + "/cities";
             // Getting the response from API
             HttpResponseMessage responseMessageAllCities = _httpClient.GetAsync(urlAllCities).Result;
+
             if (responseMessageAllCities.IsSuccessStatusCode)
             {
                 // Binding the response to responAllCities
                 responAllCities = responseMessageAllCities.Content.ReadAsStringAsync().Result;
             }
+
             var cities = JsonConvert.DeserializeObject<ObservableCollection<City>>(responAllCities);
             #endregion
 
             #region Initialization of SelectedCities
+
             //Connecting to API
-            string urlSelectedCities = Connector.ApiConnectionString + "/userselect";
+            string urlSelectedCities = connector.ApiConnectionString + "/userselect";
             // Getting the response from API
             HttpResponseMessage responseMessageSelectedCities = _httpClient.GetAsync(urlSelectedCities).Result;
+
             if (responseMessageSelectedCities.IsSuccessStatusCode)
             {
                 // Binding the response to responSelectedCities
                 responSelectedCities = responseMessageSelectedCities.Content.ReadAsStringAsync().Result;
             }
+
             //Initialization of the SelectedCities collection
             SelectedCities = JsonConvert.DeserializeObject<ObservableCollection<string>>(responSelectedCities);
             #endregion
@@ -175,24 +186,29 @@ namespace AirQualittyApp.ViewModels
         public async Task SearchCity()
         {
             // url for connecting to API
-            string url = Connector.ApiConnectionString + "/airquality/" + CityName;
+            string url = connector.ApiConnectionString + "/airquality/" + CityName;
 
             // Getting the response from API
-            HttpResponseMessage responseMessage = await _httpClient.GetAsync(url); 
+            HttpResponseMessage responseMessage = await _httpClient.GetAsync(url);
 
-            if(responseMessage.IsSuccessStatusCode)
+            if (responseMessage.IsSuccessStatusCode)
             {
                 // Binding the response to Quality
-                Quality = await responseMessage.Content.ReadAsStringAsync(); 
+                Quality = await responseMessage.Content.ReadAsStringAsync();
             }
 
             //Changing the color of canvas depending on the Quality
-            if (Convert.ToInt32(Quality) <= 50) ColorForCanvas = "#35cc38";
-            else if (Convert.ToInt32(Quality) >= 50 && Convert.ToInt32(Quality) <= 100) ColorForCanvas = "#f7ed60";
-            else if (Convert.ToInt32(Quality) >= 101 && Convert.ToInt32(Quality) <= 150) ColorForCanvas = "#f7a960";
-            else if (Convert.ToInt32(Quality) >= 151 && Convert.ToInt32(Quality) <= 200) ColorForCanvas = "#fa5252";
-            else if (Convert.ToInt32(Quality) >= 201 && Convert.ToInt32(Quality) <= 300) ColorForCanvas = "#c252fa";
-            else if (Convert.ToInt32(Quality) >= 301) ColorForCanvas = "#590d11";
+            if (Quality == "error") { ColorForCanvas = "#fc0b03"; return; }
+            if(Quality != "error")
+            {
+                if (Convert.ToInt32(Quality) <= 50) ColorForCanvas = "#35cc38";
+                else if (Convert.ToInt32(Quality) >= 50 && Convert.ToInt32(Quality) <= 100) ColorForCanvas = "#f7ed60";
+                else if (Convert.ToInt32(Quality) >= 101 && Convert.ToInt32(Quality) <= 150) ColorForCanvas = "#f7a960";
+                else if (Convert.ToInt32(Quality) >= 151 && Convert.ToInt32(Quality) <= 200) ColorForCanvas = "#fa5252";
+                else if (Convert.ToInt32(Quality) >= 201 && Convert.ToInt32(Quality) <= 300) ColorForCanvas = "#c252fa";
+                else if (Convert.ToInt32(Quality) >= 301) ColorForCanvas = "#590d11";
+            }
+            
         }
 
         /// <summary>
@@ -204,7 +220,7 @@ namespace AirQualittyApp.ViewModels
             var content = new StringContent(SerializeObject("post"), Encoding.UTF8, "application/json");
 
             // url for connecting to API
-            string urlPost = Connector.ApiConnectionString + "/userselect/" + id;
+            string urlPost = connector.ApiConnectionString + "/userselect/" + id;
 
             //Connection
             _httpClient.PostAsync(urlPost, content);
@@ -217,7 +233,7 @@ namespace AirQualittyApp.ViewModels
         {
 
             // url for connecting to API
-            string urlDelete = Connector.ApiConnectionString + "/userselect/" + id;
+            string urlDelete = connector.ApiConnectionString + "/userselect/" + id;
 
             //Connecting
             _httpClient.DeleteAsync(urlDelete);
@@ -232,6 +248,7 @@ namespace AirQualittyApp.ViewModels
 
             // Showing the Statistic Page
             statisticPage.Show();
+
         }
 
         /// <summary>
@@ -244,9 +261,6 @@ namespace AirQualittyApp.ViewModels
 
             return JsonConvert.SerializeObject(value, jsonSettings);
         }
-        #endregion
-
-        #region Comments
         #endregion
 
         #region INotifyPropertyChanged

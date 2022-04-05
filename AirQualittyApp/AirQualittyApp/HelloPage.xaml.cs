@@ -28,6 +28,7 @@ namespace AirQualittyApp
         {
             InitializeComponent();
         }
+        Connector connector = Connector.GetInstance();
         private static HttpClient _httpClient = new HttpClient();
 
         private void Button_Start(object sender, RoutedEventArgs e)
@@ -38,15 +39,16 @@ namespace AirQualittyApp
             main.Show();
 
 
-            ////Content for Post Api
-            //var content = new StringContent(SerializeObject("post"), Encoding.UTF8, "application/json");
+            //Content for Post Api
+            var content = new StringContent(SerializeObject("post"), Encoding.UTF8, "application/json");
 
-            //// url for connecting to API
-            //string urlPost = Connector.ApiConnectionString + "/airquality";
+            // url for connecting to API
+            string urlPost = connector.ApiConnectionString + "/airquality";
 
-            ////Connection
-            //_httpClient.PostAsync(urlPost, content);
+            //Connection
+            _httpClient.PostAsync(urlPost, content);
         }
+
         private string SerializeObject<T>(T value, bool handleTimeZone = true)
         {
             var jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
